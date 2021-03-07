@@ -1,4 +1,5 @@
 import java.io.ByteArrayInputStream
+import java.lang.Exception
 import java.util.*
 
 class SmartCalculator {
@@ -10,50 +11,76 @@ class SmartCalculator {
         fun String.isNegativeBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
         fun String.isPositiveBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
 
-        val sumOfNums = nums.split(" ").map { num ->
-            when {
-                num.isNegativeBinaryOperator() -> {
-                    if (num.length % 2 == 1) operation *= -1
-                    else operation = 1
-                    0
-                }
-                num.isPositiveBinaryOperator() -> {
-                    operation = 1
-                    0
-                }
-                else -> {
-                    val result = operation * num.toInt()
-                    // Reset operation to add
-                    operation = 1
-                    result
+        fun subtractNextOperand():Int {
+            operation = -1
+            return 0
+        }
+        fun addNextOperand():Int {
+            operation = 1
+            return 0
+        }
+        fun performOperationOnOperand(num: Int):Int {
+            val result = operation * num
+            operation = 1
+            return result
+        }
+
+        try {
+            val sumOfNums = nums.split(" ").map { num ->
+                when {
+                    num.isNegativeBinaryOperator() -> {
+                        if (num.length % 2 == 1) subtractNextOperand()
+                        else addNextOperand()
+                    }
+                    num.isPositiveBinaryOperator() -> {
+                        addNextOperand()
+                    }
+                    else -> {
+                        performOperationOnOperand(num.toInt())
+                    }
+
                 }
 
-            }
-        }.reduce{numSum, num -> numSum + num}
+            }.reduce{numSum, num -> numSum + num}
+            println(sumOfNums)
+        }catch(e:Exception){
+            println("Invalid Expression")
+        }
 
-        println(sumOfNums)
     }
 
     fun multiSum() {
         val scanner = Scanner(System.`in`)
 
-        loop@ while (scanner.hasNextLine()) {
+        while (scanner.hasNextLine()) {
             val nextLine = scanner.nextLine()
 
-            when (val line = nextLine.toString()) {
-                "/exit" -> {
-                    println("Bye!")
-                    return
+            val line = nextLine.toString()
+
+            try {
+
+                when {
+                    line.first() == '/' -> {
+                        when (line) {
+                            "/exit" -> {
+                                println("Bye!")
+                                return
+                            }
+                            "/help" -> {
+                                println("The program calculates the sum of numbers")
+                                println("Supports + and - operations.")
+                                println("An even number of - is +. -- = +")
+                            }
+                            else -> println("Unknown Command")
+                        }
+                    }
+                    else -> {
+                        sum(line)
+                    }
                 }
-                "/help" -> {
-                    println("The program calculates the sum of numbers")
-                    println("Supports + and - operations.")
-                    println("An even number of - is +. -- = +")
-                }
-                "" -> continue@loop
-                else -> {
-                    sum(line)
-                }
+            }
+            catch (e:Exception){
+                continue
             }
         }
 
