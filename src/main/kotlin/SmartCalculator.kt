@@ -4,48 +4,81 @@ import java.util.*
 
 class SmartCalculator {
 
-    fun sum(nums: String) {
+    private var variables = mutableMapOf<String, Int>()
 
-        var operation = 1
+    private var sign = 1
 
-        fun String.isNegativeBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
-        fun String.isPositiveBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
+    private fun subtractNextOperand(): Int {
+        sign = -1
+        return 0
+    }
 
-        fun subtractNextOperand():Int {
-            operation = -1
-            return 0
-        }
-        fun addNextOperand():Int {
-            operation = 1
-            return 0
-        }
-        fun performOperationOnOperand(num: Int):Int {
-            val result = operation * num
-            operation = 1
-            return result
-        }
+    private fun addNextOperand(): Int {
+        sign = 1
+        return 0
+    }
 
-        try {
-            val sumOfNums = nums.split(" ").map { num ->
-                when {
-                    num.isNegativeBinaryOperator() -> {
-                        if (num.length % 2 == 1) subtractNextOperand()
-                        else addNextOperand()
-                    }
-                    num.isPositiveBinaryOperator() -> {
-                        addNextOperand()
-                    }
-                    else -> {
-                        performOperationOnOperand(num.toInt())
-                    }
+    private fun performOperationOnOperand(num: Int): Int {
+        val result = sign * num
+        sign = 1
+        return result
+    }
 
+    private fun variableAssignment(line: String) {
+
+        val (i, v) = line.split("=").map { it.trim() }
+
+        variables[i] = v.toInt()
+
+    }
+
+    private fun calculateSumOfString(nums: String): Int {
+        return nums.split(" ").map { num ->
+            when {
+                num.isNegativeBinaryOperator() -> {
+                    if (num.length % 2 == 1) subtractNextOperand()
+                    else addNextOperand()
+                }
+                num.isPositiveBinaryOperator() -> {
+                    addNextOperand()
+                }
+                else -> {
+                    performOperationOnOperand(num.toInt())
                 }
 
-            }.reduce{numSum, num -> numSum + num}
-            println(sumOfNums)
-        }catch(e:Exception){
+            }
+        }.reduce { numSum, num -> numSum + num }
+    }
+
+    private fun String.isNegativeBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
+    private fun String.isPositiveBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
+
+    fun sum(nums: String) {
+        try {
+            val numsSum = calculateSumOfString(nums)
+
+            println(numsSum)
+        } catch (e: Exception) {
             println("Invalid Expression")
         }
+
+    }
+
+    private fun runCommand(command: String):Boolean {
+        when (command) {
+            "/exit" -> {
+                println("Bye!")
+                return false
+            }
+            "/help" -> {
+                println("The program calculates the sum of numbers")
+                println("Supports + and - operations.")
+                println("An even number of - is +. -- = +")
+            }
+            else -> println("Unknown Command")
+        }
+
+        return true
 
     }
 
@@ -61,25 +94,12 @@ class SmartCalculator {
 
                 when {
                     line.first() == '/' -> {
-                        when (line) {
-                            "/exit" -> {
-                                println("Bye!")
-                                return
-                            }
-                            "/help" -> {
-                                println("The program calculates the sum of numbers")
-                                println("Supports + and - operations.")
-                                println("An even number of - is +. -- = +")
-                            }
-                            else -> println("Unknown Command")
-                        }
+                        if (!runCommand(line)) return
                     }
-                    else -> {
-                        sum(line)
-                    }
+                    line.contains('=') -> variableAssignment(line)
+                    else -> sum(line)
                 }
-            }
-            catch (e:Exception){
+            } catch (e: Exception) {
                 continue
             }
         }
