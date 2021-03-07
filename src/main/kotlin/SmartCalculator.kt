@@ -1,4 +1,5 @@
 import java.io.ByteArrayInputStream
+import java.lang.Exception
 import java.util.*
 
 class SmartCalculator {
@@ -24,23 +25,28 @@ class SmartCalculator {
             return result
         }
 
-        val sumOfNums = nums.split(" ").map { num ->
-            when {
-                num.isNegativeBinaryOperator() -> {
-                    if (num.length % 2 == 1) subtractNextOperand()
-                    else addNextOperand()
-                }
-                num.isPositiveBinaryOperator() -> {
-                    addNextOperand()
-                }
-                else -> {
-                    performOperationOnOperand(num.toInt())
+        try {
+            val sumOfNums = nums.split(" ").map { num ->
+                when {
+                    num.isNegativeBinaryOperator() -> {
+                        if (num.length % 2 == 1) subtractNextOperand()
+                        else addNextOperand()
+                    }
+                    num.isPositiveBinaryOperator() -> {
+                        addNextOperand()
+                    }
+                    else -> {
+                        performOperationOnOperand(num.toInt())
+                    }
+
                 }
 
-            }
         }.reduce{numSum, num -> numSum + num}
+            println(sumOfNums)
+        }catch(e:Exception){
+            println("Invalid Expression")
+        }
 
-        println(sumOfNums)
     }
 
     fun multiSum() {

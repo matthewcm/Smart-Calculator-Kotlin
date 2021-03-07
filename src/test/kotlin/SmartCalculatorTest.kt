@@ -259,5 +259,20 @@ internal class SmartCalculatorTest {
         assertEquals("", result)
 
     }
+    @Test
+    fun `Given 'abc' '' as two inputs, When multiSum is invoked, then it should print Invalid Expression`() {
+//         Given
+        val input = "abc\n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Invalid Expression", result)
+
+    }
 
 }
