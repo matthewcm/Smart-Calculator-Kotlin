@@ -12,7 +12,7 @@ class SmartCalculator {
     fun multiSum() {
         val scanner = Scanner(System.`in`)
 
-        while (scanner.hasNextLine()){
+        loop@ while (scanner.hasNextLine()){
             val nextLine = scanner.nextLine()
 
             when (val line = nextLine.toString()){
@@ -20,9 +20,8 @@ class SmartCalculator {
                     println("Bye!" )
                     return
                 }
-                "/help" -> {
-                    println("The program calculates the sum of numbers" )
-                }
+                "/help" -> println("The program calculates the sum of numbers" )
+                "" -> continue@loop
                 else -> {
                     val numbers  =  "$line 0"
                         .split(' ')
