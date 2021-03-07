@@ -142,5 +142,20 @@ internal class SmartCalculatorTest {
         assertEquals( 22, b)
 
     }
+    @Test
+    fun `Given '' '' as two inputs, When multiSum is invoked, then it should not print anything`() {
+//         Given
+        val input = "\n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString()
+        assertEquals( "", result)
+
+    }
 
 }
