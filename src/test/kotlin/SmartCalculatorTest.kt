@@ -8,7 +8,7 @@ import java.io.PrintStream
 internal class SmartCalculatorTest {
 
     private var sc = SmartCalculator()
-    val myOut = ByteArrayOutputStream()
+    private val myOut = ByteArrayOutputStream()
 
 
     @BeforeEach
@@ -53,14 +53,14 @@ internal class SmartCalculatorTest {
     fun `Given '10 12' '5 6' as two inputs, When multiSum is invoked, then it should print 22 and print 11`() {
 //         Given
         val input = "10 12\n5 6"
-        val inp = ByteArrayInputStream(input.toByteArray());
-        System.setIn(inp);
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
 
 //        WHEN
         sc.multiSum()
 
 
-        var (a,b) = myOut.toString()
+        val (a,b) = myOut.toString()
             .trim()
             .lines()
             .map{it.trim()}
@@ -69,6 +69,29 @@ internal class SmartCalculatorTest {
 //        THEN
         assertEquals( 22, a)
         assertEquals( 11, b)
+
+    }
+
+    @Test
+    fun `Given '10 12 13' '5 6 5 6' as two inputs, When multiSum is invoked, then it should print 35 and print 22`() {
+//         Given
+        val input = "10 12 13\n5 6 5 6"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+
+        val (a,b) = myOut.toString()
+            .trim()
+            .lines()
+            .map{it.trim()}
+            .map{it.toInt()}
+
+//        THEN
+        assertEquals( 35, a)
+        assertEquals( 22, b)
 
     }
 

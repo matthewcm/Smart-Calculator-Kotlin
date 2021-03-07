@@ -13,7 +13,7 @@ class SmartCalculator {
         val scanner = Scanner(System.`in`)
 
         while (scanner.hasNextLine()){
-            var line = scanner.nextLine()
+            val line = scanner.nextLine()
 
             if (line.toString() == "/exit") {
                 println("Bye!" )
