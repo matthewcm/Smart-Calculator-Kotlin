@@ -259,10 +259,11 @@ internal class SmartCalculatorTest {
         assertEquals("", result)
 
     }
+
     @Test
-    fun `Given 'abc' '' as two inputs, When multiSum is invoked, then it should print Invalid Expression`() {
+    fun `Given '10abc' '' as two inputs, When multiSum is invoked, then it should print Invalid Expression`() {
 //         Given
-        val input = "abc\n\n"
+        val input = "10abc\n\n"
         val inp = ByteArrayInputStream(input.toByteArray())
         System.setIn(inp)
 
@@ -274,6 +275,7 @@ internal class SmartCalculatorTest {
         assertEquals("Invalid Expression", result)
 
     }
+
     @Test
     fun `Given '10+' is input, When sum is invoked, then it should Invalid Expression`() {
 //         Given
@@ -288,6 +290,7 @@ internal class SmartCalculatorTest {
         assertEquals("Invalid Expression", sum)
 
     }
+
     @Test
     fun `Given command 'abc', When multiSum is invoked, then it should print Unknown Command`() {
 //         Given
@@ -301,6 +304,144 @@ internal class SmartCalculatorTest {
 //        THEN
         val result = myOut.toString().trim()
         assertEquals("Unknown Command", result)
+
+    }
+
+    @Test
+    fun `Given input 'n = 10' 'n' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "n = 10\n n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(10, result)
+
+    }
+    @Test
+    fun `Given input 'n =10' 'n' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "n  =10\n n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(10, result)
+
+    }
+    @Test
+    fun `Given input 'MINI =10' 'MINI' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "MINI  =10\n MINI\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(10, result)
+
+    }
+
+    @Test
+    fun `Given input 'n =10' 'b = n' 'b' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "n  =10\nb=n \n b"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(10, result)
+
+    }
+    @Test
+    fun `Given input 'n =10' 'b' , When multiSum is invoked, then it should print Unknown variable`() {
+//         Given
+        val input = "n  =10\n b"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Unknown variable", result)
+
+    }
+    @Test
+    fun `Given input 'n =10' 'b = 5' 'a + b' , When multiSum is invoked, then it should print 15`() {
+//         Given
+        val input = "n = 10\n b = 5\n n + b"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(15, result)
+
+    }
+    @Test
+    fun `Given input 'n =10' 'b = 5' 'a + b' , When multiSum is invoked, then it should print Unknown variable`() {
+//         Given
+        val input = "n = 10\n b = 5\n a + b"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Unknown variable", result)
+
+    }
+    @Test
+    fun `Given input 'var1 = 10' , When multiSum is invoked, then it should print Invalid assignment`() {
+//         Given
+        val input = "var1 = 10"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Invalid assignment", result)
+
+    }
+
+    @Test
+    fun `Given input 'var = 10b0' , When multiSum is invoked, then it should print Invalid assignment`() {
+//         Given
+        val input = "var = 10b0"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Invalid assignment", result)
 
     }
 
