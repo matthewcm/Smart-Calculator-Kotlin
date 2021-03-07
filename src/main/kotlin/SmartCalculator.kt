@@ -10,22 +10,31 @@ class SmartCalculator {
         fun String.isNegativeBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
         fun String.isPositiveBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
 
+        fun subtractNextOperand():Int {
+            operation = -1
+            return 0
+        }
+        fun addNextOperand():Int {
+            operation = 1
+            return 0
+        }
+        fun performOperationOnOperand(num: Int):Int {
+            val result = operation * num
+            operation = 1
+            return result
+        }
+
         val sumOfNums = nums.split(" ").map { num ->
             when {
                 num.isNegativeBinaryOperator() -> {
-                    if (num.length % 2 == 1) operation *= -1
-                    else operation = 1
-                    0
+                    if (num.length % 2 == 1) subtractNextOperand()
+                    else addNextOperand()
                 }
                 num.isPositiveBinaryOperator() -> {
-                    operation = 1
-                    0
+                    addNextOperand()
                 }
                 else -> {
-                    val result = operation * num.toInt()
-                    // Reset operation to add
-                    operation = 1
-                    result
+                    performOperationOnOperand(num.toInt())
                 }
 
             }
