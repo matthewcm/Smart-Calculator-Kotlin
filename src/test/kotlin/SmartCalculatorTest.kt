@@ -1,30 +1,44 @@
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+
 
 internal class SmartCalculatorTest {
 
     private var sc = SmartCalculator()
+    val myOut = ByteArrayOutputStream()
+
 
     @BeforeEach
     fun before() {
+        System.setOut(PrintStream(myOut))
         sc = SmartCalculator()
     }
 
     @Test
-    fun `Given '10 12' is input, When sum is invoked, then it should return 22`() {
+    fun `Given '10 12' is input, When sum is invoked, then it should print 22`() {
 //         Given
+
         val input = "5 6"
         val inp = ByteArrayInputStream(input.toByteArray());
         System.setIn(inp);
 
+
+// test stuff here...
+
+
+// test stuff here...
+
 //        WHEN
-        val sum = sc.sum()
+        sc.sum()
+        val sum = myOut.toString()
 
 //        THEN
-        assertEquals(sum, 11)
+        assertEquals(11, sum)
 
     }
     @Test
@@ -35,10 +49,11 @@ internal class SmartCalculatorTest {
         System.setIn(inp);
 
 //        WHEN
-        val sum = sc.sum()
+        sc.sum()
+        val sum = myOut.toString()
 
 //        THEN
-        assertEquals(sum, 11)
+        assertEquals(11, sum)
 
     }
 
