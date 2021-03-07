@@ -21,11 +21,12 @@ class SmartCalculator {
             }
 
             if (line != ""){
-                val (x,y)  =  "$line 0"
+                val numbers  =  "$line 0"
                     .split(' ')
                     .map{it.toInt()}
+                    .toIntArray()
 
-                sum(intArrayOf(x,y))
+                sum(numbers)
             }
         }
 
