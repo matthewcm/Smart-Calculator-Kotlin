@@ -1,11 +1,9 @@
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-
 
 internal class SmartCalculatorTest {
 
@@ -22,33 +20,39 @@ internal class SmartCalculatorTest {
     @Test
     fun `Given '10 12' is input, When sum is invoked, then it should print 22`() {
 //         Given
+        val x = 10
+        val y = 12
 
-        val input = "10 12"
-        val inp = ByteArrayInputStream(input.toByteArray());
-        System.setIn(inp);
 
 //        WHEN
-        sc.sum()
-        val sum = myOut.toString()
+        sc.sum(x,y)
+        val sum = myOut.toString().trim().toInt()
 
 //        THEN
-        assertEquals(22, sum.trim().toInt())
+        assertEquals(sum, 22)
 
     }
 
     @Test
-    fun `Given '5 6' is input, When sum is called, then it should return 11`() {
+    fun `Given '10 12' '5 6' as two inputs, When multiSum is invoked, then it should print 22 and print 11`() {
 //         Given
-        val input = "5 6"
+        val input = "10 12\n5 6"
         val inp = ByteArrayInputStream(input.toByteArray());
         System.setIn(inp);
 
 //        WHEN
-        sc.sum()
-        val sum = myOut.toString()
+        sc.multiSum()
+
+
+        var (a,b) = myOut.toString()
+            .trim()
+            .lines()
+            .map{it.trim()}
+            .map{it.toInt()}
 
 //        THEN
-        assertEquals(11, sum.trim().toInt())
+        assertEquals( 22, a)
+        assertEquals( 11, b)
 
     }
 
