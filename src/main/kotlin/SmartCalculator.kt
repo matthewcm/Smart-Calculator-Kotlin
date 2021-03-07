@@ -1,11 +1,12 @@
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.util.*
 
 class SmartCalculator {
 
-    fun sum(a:Int, b:Int) = println(a + b)
+    fun sum(nums: IntArray) {
+
+        println(nums[0] + nums[1])
+    }
 
     fun multiSum() {
         val scanner = Scanner(System.`in`)
@@ -23,7 +24,7 @@ class SmartCalculator {
                     .split(' ')
                     .map{it.toInt()}
 
-                sum(x, y)
+                sum(intArrayOf(x,y))
             }
         }
 

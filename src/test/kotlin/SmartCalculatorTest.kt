@@ -25,11 +25,27 @@ internal class SmartCalculatorTest {
 
 
 //        WHEN
-        sc.sum(x,y)
+        sc.sum(intArrayOf( x,y))
         val sum = myOut.toString().trim().toInt()
 
 //        THEN
         assertEquals(sum, 22)
+
+    }
+    @Test
+    fun `Given '10 12 13' is input, When sum is invoked, then it should print 35`() {
+//         Given
+        val x = 10
+        val y = 12
+        val z = 35
+
+
+//        WHEN
+        sc.sum(intArrayOf(x,y,z))
+        val sum = myOut.toString().trim().toInt()
+
+//        THEN
+        assertEquals(sum, 35)
 
     }
 
