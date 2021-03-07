@@ -1,29 +1,35 @@
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.util.*
 
 class SmartCalculator {
 
-    fun sum(a:Int, b:Int) = println(a + b)
+    fun sum(nums: IntArray) {
+
+        val sumOfNums = nums.reduce{sumNum, num -> sumNum + num}
+        println(sumOfNums)
+    }
 
     fun multiSum() {
         val scanner = Scanner(System.`in`)
 
-        while (scanner.hasNextLine()){
-            var line = scanner.nextLine()
+        loop@ while (scanner.hasNextLine()){
+            val nextLine = scanner.nextLine()
 
-            if (line.toString() == "/exit") {
-                println("Bye!" )
-                return
-            }
+            when (val line = nextLine.toString()){
+                "/exit" -> {
+                    println("Bye!" )
+                    return
+                }
+                "/help" -> println("The program calculates the sum of numbers" )
+                "" -> continue@loop
+                else -> {
+                    val numbers  =  "$line 0"
+                        .split(' ')
+                        .map{it.toInt()}
+                        .toIntArray()
 
-            if (line != ""){
-                val (x,y)  =  "$line 0"
-                    .split(' ')
-                    .map{it.toInt()}
-
-                sum(x, y)
+                    sum(numbers)
+                }
             }
         }
 
