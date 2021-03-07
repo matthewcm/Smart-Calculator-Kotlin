@@ -274,5 +274,34 @@ internal class SmartCalculatorTest {
         assertEquals("Invalid Expression", result)
 
     }
+    @Test
+    fun `Given '10+' is input, When sum is invoked, then it should Invalid Expression`() {
+//         Given
+        val input = "10+"
+
+
+//        WHEN
+        sc.sum(input)
+
+//        THEN
+        val sum = myOut.toString().trim()
+        assertEquals("Invalid Expression", sum)
+
+    }
+    @Test
+    fun `Given command 'abc', When multiSum is invoked, then it should print Unknown Command`() {
+//         Given
+        val input = "/abc\n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Unknown Command", result)
+
+    }
 
 }

@@ -41,7 +41,7 @@ class SmartCalculator {
 
                 }
 
-        }.reduce{numSum, num -> numSum + num}
+            }.reduce{numSum, num -> numSum + num}
             println(sumOfNums)
         }catch(e:Exception){
             println("Invalid Expression")
@@ -52,23 +52,35 @@ class SmartCalculator {
     fun multiSum() {
         val scanner = Scanner(System.`in`)
 
-        loop@ while (scanner.hasNextLine()) {
+        while (scanner.hasNextLine()) {
             val nextLine = scanner.nextLine()
 
-            when (val line = nextLine.toString()) {
-                "/exit" -> {
-                    println("Bye!")
-                    return
+            val line = nextLine.toString()
+
+            try {
+
+                when {
+                    line.first() == '/' -> {
+                        when (line) {
+                            "/exit" -> {
+                                println("Bye!")
+                                return
+                            }
+                            "/help" -> {
+                                println("The program calculates the sum of numbers")
+                                println("Supports + and - operations.")
+                                println("An even number of - is +. -- = +")
+                            }
+                            else -> println("Unknown Command")
+                        }
+                    }
+                    else -> {
+                        sum(line)
+                    }
                 }
-                "/help" -> {
-                    println("The program calculates the sum of numbers")
-                    println("Supports + and - operations.")
-                    println("An even number of - is +. -- = +")
-                }
-                "" -> continue@loop
-                else -> {
-                    sum(line)
-                }
+            }
+            catch (e:Exception){
+                continue
             }
         }
 
