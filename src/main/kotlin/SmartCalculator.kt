@@ -1,4 +1,5 @@
 import java.io.ByteArrayInputStream
+import java.lang.ArithmeticException
 import java.lang.Exception
 import java.util.*
 
@@ -24,15 +25,25 @@ class SmartCalculator {
         return result
     }
 
+    private fun String.isNumber() : Boolean {
+        return if (isNullOrEmpty()) false else all { Character.isDigit(it) }
+    }
+
     private fun variableAssignment(line: String) {
 
         val (i, v) = line.split("=").map { it.trim() }
 
+        try {
+            if (i.isAVariable()){
+                if (variables.containsKey(v)) variables[i] = variables[v]!!.toInt()
+                else{
+                    if (v.isNumber()) variables[i] = v.toInt()
+                    else throw Exception()
+                }
+            }else throw Exception()
 
-        if (variables.containsKey(v)){
-            variables[i] = variables[v]!!.toInt()
-        }else{
-            variables[i] = v.toInt()
+        }catch (e: Exception){
+            println("Invalid assignment")
         }
 
     }
@@ -40,12 +51,16 @@ class SmartCalculator {
     private fun calculateSumOfString(nums: String): Int {
         return nums.split(" ").map { num ->
             when {
-                num.isNegativeBinaryOperator() -> {
+                num.isANegativeBinaryOperator() -> {
                     if (num.length % 2 == 1) subtractNextOperand()
                     else addNextOperand()
                 }
-                num.isPositiveBinaryOperator() -> {
+                num.isAPositiveBinaryOperator() -> {
                     addNextOperand()
+                }
+                num.isAVariable() -> {
+                    if (variables.containsKey(num)) performOperationOnOperand(variables[num]!!.toInt())
+                    else throw ArithmeticException()
                 }
                 else -> {
                     performOperationOnOperand(num.toInt())
@@ -55,14 +70,17 @@ class SmartCalculator {
         }.reduce { numSum, num -> numSum + num }
     }
 
-    private fun String.isNegativeBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
-    private fun String.isPositiveBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
+    private fun String.isANegativeBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
+    private fun String.isAPositiveBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
+    private fun String.isAVariable(): Boolean = matches(Regex("[a-zA-Z]+"))
 
     fun sum(nums: String) {
         try {
             val numsSum = calculateSumOfString(nums)
 
             println(numsSum)
+        } catch (e: ArithmeticException) {
+            println("Unknown variable")
         } catch (e: Exception) {
             println("Invalid Expression")
         }
@@ -87,7 +105,10 @@ class SmartCalculator {
 
     }
 
-    private fun printVariable(name: String) = println(variables[name])
+    private fun printVariable(name: String) {
+        if (variables.containsKey(name)) println(variables[name])
+        else println("Unknown variable")
+    }
 
     fun multiSum() {
         val scanner = Scanner(System.`in`)
@@ -104,7 +125,7 @@ class SmartCalculator {
                         if (!runCommand(line)) return
                     }
                     line.contains('=') -> variableAssignment(line)
-                    line.matches(Regex("[a-zA-Z]+")) -> {
+                    line.isAVariable() -> {
                         printVariable(line)
                     }
                     else -> sum(line)
