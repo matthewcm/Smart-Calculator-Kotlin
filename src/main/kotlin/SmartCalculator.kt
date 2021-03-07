@@ -13,20 +13,26 @@ class SmartCalculator {
         val scanner = Scanner(System.`in`)
 
         while (scanner.hasNextLine()){
-            val line = scanner.nextLine()
+            val nextLine = scanner.nextLine()
 
-            if (line.toString() == "/exit") {
-                println("Bye!" )
-                return
-            }
+            when (val line = nextLine.toString()){
+                "/exit" -> {
+                    println("Bye!" )
+                    return
+                }
+                "/help" -> {
+                    println("The program calculates the sum of numbers" )
+                    return
+                }
+                else -> {
+                    val numbers  =  "$line 0"
+                        .split(' ')
+                        .map{it.toInt()}
+                        .toIntArray()
 
-            if (line != ""){
-                val numbers  =  "$line 0"
-                    .split(' ')
-                    .map{it.toInt()}
-                    .toIntArray()
+                    sum(numbers)
 
-                sum(numbers)
+                }
             }
         }
 

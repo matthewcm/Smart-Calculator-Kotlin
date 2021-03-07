@@ -35,7 +35,7 @@ internal class SmartCalculatorTest {
     @Test
     fun `Given 'exit' is input, When multisum is invoked, then it should exit the program`() {
 //         Given
-        val input = "/exit"
+        val input = "/exit\n5 6"
         val inp = ByteArrayInputStream(input.toByteArray())
         System.setIn(inp)
 
@@ -61,7 +61,23 @@ internal class SmartCalculatorTest {
         val result = myOut.toString().trim()
 
 //        THEN
-        assertEquals("Bye!",result)
+        assertEquals("The program calculates the sum of numbers",result)
+
+    }
+    @Test
+    fun `Given 'help' is input, When multisum is invoked, then it should print information about the program and continue`() {
+//         Given
+        val input = "/help\n5 6"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+
+//        WHEN
+        sc.multiSum()
+        val result = myOut.toString().trim()
+
+//        THEN
+        assertEquals("The program calculates the sum of numbers\n11",result)
 
     }
     @Test
