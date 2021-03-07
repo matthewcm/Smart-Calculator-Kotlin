@@ -22,7 +22,6 @@ class SmartCalculator {
                 }
                 "/help" -> {
                     println("The program calculates the sum of numbers" )
-                    return
                 }
                 else -> {
                     val numbers  =  "$line 0"
@@ -31,7 +30,6 @@ class SmartCalculator {
                         .toIntArray()
 
                     sum(numbers)
-
                 }
             }
         }

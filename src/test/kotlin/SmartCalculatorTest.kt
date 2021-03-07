@@ -74,10 +74,10 @@ internal class SmartCalculatorTest {
 
 //        WHEN
         sc.multiSum()
-        val result = myOut.toString().trim()
+        val result = myOut.toString().trim().lines()
 
 //        THEN
-        assertEquals("The program calculates the sum of numbers\n11",result)
+        assertEquals(listOf("The program calculates the sum of numbers", "11"), result)
 
     }
     @Test
