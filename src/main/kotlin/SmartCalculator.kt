@@ -1,12 +1,12 @@
 import java.util.*
 
 class SmartCalculator {
-    fun sum(): Int{
+    fun sum() {
         val scanner = Scanner(System.`in`)
 
         val a = scanner.nextInt()
         val b = scanner.nextInt()
 
-        return a + b
+        println(a + b)
     }
 }

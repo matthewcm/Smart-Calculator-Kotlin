@@ -23,24 +23,19 @@ internal class SmartCalculatorTest {
     fun `Given '10 12' is input, When sum is invoked, then it should print 22`() {
 //         Given
 
-        val input = "5 6"
+        val input = "10 12"
         val inp = ByteArrayInputStream(input.toByteArray());
         System.setIn(inp);
-
-
-// test stuff here...
-
-
-// test stuff here...
 
 //        WHEN
         sc.sum()
         val sum = myOut.toString()
 
 //        THEN
-        assertEquals(11, sum)
+        assertEquals(22, sum.trim().toInt())
 
     }
+
     @Test
     fun `Given '5 6' is input, When sum is called, then it should return 11`() {
 //         Given
@@ -53,7 +48,7 @@ internal class SmartCalculatorTest {
         val sum = myOut.toString()
 
 //        THEN
-        assertEquals(11, sum)
+        assertEquals(11, sum.trim().toInt())
 
     }
 
