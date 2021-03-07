@@ -29,7 +29,7 @@ internal class SmartCalculatorTest {
         val sum = myOut.toString().trim().toInt()
 
 //        THEN
-        assertEquals(sum, 22)
+        assertEquals(22, sum)
 
     }
     @Test
@@ -37,7 +37,7 @@ internal class SmartCalculatorTest {
 //         Given
         val x = 10
         val y = 12
-        val z = 35
+        val z = 13
 
 
 //        WHEN
@@ -45,7 +45,7 @@ internal class SmartCalculatorTest {
         val sum = myOut.toString().trim().toInt()
 
 //        THEN
-        assertEquals(sum, 35)
+        assertEquals(35, sum)
 
     }
 

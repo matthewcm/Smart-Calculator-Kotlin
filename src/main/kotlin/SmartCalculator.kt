@@ -5,7 +5,8 @@ class SmartCalculator {
 
     fun sum(nums: IntArray) {
 
-        println(nums[0] + nums[1])
+        val sumOfNums = nums.reduce{sumNum, num -> sumNum + num}
+        println(sumOfNums)
     }
 
     fun multiSum() {
