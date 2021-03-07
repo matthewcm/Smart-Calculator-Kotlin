@@ -30,13 +30,9 @@ class SmartCalculator {
             try {
 
                 when {
-                    line.first() == '/' -> {
-                        if (!runCommand(line)) return
-                    }
+                    line.first() == '/' -> if (!runCommand(line)) return
                     line.contains('=') -> variableAssignment(line)
-                    line.isAVariable() -> {
-                        printVariable(line)
-                    }
+                    line.isAVariable() -> printVariable(line)
                     else -> sum(line)
                 }
             } catch (e: Exception) {
@@ -66,20 +62,16 @@ class SmartCalculator {
     private fun calculateSumOfString(nums: String): Int {
         return nums.split(" ").map { num ->
             when {
+                num.isAPositiveBinaryOperator() -> addNextOperand()
                 num.isANegativeBinaryOperator() -> {
                     if (num.length % 2 == 1) subtractNextOperand()
                     else addNextOperand()
-                }
-                num.isAPositiveBinaryOperator() -> {
-                    addNextOperand()
                 }
                 num.isAVariable() -> {
                     if (variables.containsKey(num)) performOperationOnOperand(variables[num]!!.toInt())
                     else throw ArithmeticException()
                 }
-                else -> {
-                    performOperationOnOperand(num.toInt())
-                }
+                else -> performOperationOnOperand(num.toInt())
 
             }
         }.reduce { numSum, num -> numSum + num }
