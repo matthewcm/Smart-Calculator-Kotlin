@@ -29,20 +29,26 @@ internal class SmartCalculatorTest {
         val sum = myOut.toString().trim().toInt()
 
 //        THEN
-        assertEquals(sum, 11)
+        assertEquals(sum, 22)
 
     }
 
     @Test
     fun `Given '10 12' '5 6' as two inputs, When multiSum is invoked, then it should print 22 and print 11`() {
 //         Given
-        val input = "10 12\n5 6\n"
+        val input = "10 12\n5 6"
         val inp = ByteArrayInputStream(input.toByteArray());
         System.setIn(inp);
 
 //        WHEN
         sc.multiSum()
-        var (a,b) = (myOut.toString().trim().split("\n").map{it.toInt()})
+
+
+        var (a,b) = myOut.toString()
+            .trim()
+            .lines()
+            .map{it.trim()}
+            .map{it.toInt()}
 
 //        THEN
         assertEquals( 22, a)
