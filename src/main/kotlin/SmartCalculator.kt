@@ -20,7 +20,11 @@ class SmartCalculator {
                     println("Bye!" )
                     return
                 }
-                "/help" -> println("The program calculates the sum of numbers" )
+                "/help" -> {
+                    println("The program calculates the sum of numbers" )
+                    println("Supports + and - operations." )
+                    println("An even number of - is +. -- = +" )
+                }
                 "" -> continue@loop
                 else -> {
                     val numbers  =  "$line 0"
