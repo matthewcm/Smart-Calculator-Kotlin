@@ -28,7 +28,12 @@ class SmartCalculator {
 
         val (i, v) = line.split("=").map { it.trim() }
 
-        variables[i] = v.toInt()
+
+        if (variables.containsKey(v)){
+            variables[i] = variables[v]!!.toInt()
+        }else{
+            variables[i] = v.toInt()
+        }
 
     }
 
@@ -64,7 +69,7 @@ class SmartCalculator {
 
     }
 
-    private fun runCommand(command: String):Boolean {
+    private fun runCommand(command: String): Boolean {
         when (command) {
             "/exit" -> {
                 println("Bye!")
@@ -82,13 +87,15 @@ class SmartCalculator {
 
     }
 
+    private fun printVariable(name: String) = println(variables[name])
+
     fun multiSum() {
         val scanner = Scanner(System.`in`)
 
         while (scanner.hasNextLine()) {
             val nextLine = scanner.nextLine()
 
-            val line = nextLine.toString()
+            val line = nextLine.toString().trim()
 
             try {
 
@@ -97,6 +104,9 @@ class SmartCalculator {
                         if (!runCommand(line)) return
                     }
                     line.contains('=') -> variableAssignment(line)
+                    line.matches(Regex("[a-zA-Z]+")) -> {
+                        printVariable(line)
+                    }
                     else -> sum(line)
                 }
             } catch (e: Exception) {

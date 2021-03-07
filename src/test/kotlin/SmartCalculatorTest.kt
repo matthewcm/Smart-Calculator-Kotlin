@@ -261,9 +261,9 @@ internal class SmartCalculatorTest {
     }
 
     @Test
-    fun `Given 'abc' '' as two inputs, When multiSum is invoked, then it should print Invalid Expression`() {
+    fun `Given '10abc' '' as two inputs, When multiSum is invoked, then it should print Invalid Expression`() {
 //         Given
-        val input = "abc\n\n"
+        val input = "10abc\n\n"
         val inp = ByteArrayInputStream(input.toByteArray())
         System.setIn(inp)
 
@@ -311,6 +311,52 @@ internal class SmartCalculatorTest {
     fun `Given input 'n = 10' 'n' , When multiSum is invoked, then it should print 10`() {
 //         Given
         val input = "n = 10\n n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(10, result)
+
+    }
+    @Test
+    fun `Given input 'n =10' 'n' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "n  =10\n n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(10, result)
+
+    }
+    @Test
+    fun `Given input 'MINI =10' 'MINI' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "MINI  =10\n MINI\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(10, result)
+
+    }
+
+    @Test
+    fun `Given input 'n =10' 'b = n' 'b' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "n  =10\nb=n \n b"
         val inp = ByteArrayInputStream(input.toByteArray())
         System.setIn(inp)
 
