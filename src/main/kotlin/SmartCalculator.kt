@@ -10,63 +10,11 @@ class SmartCalculator {
     private var variables = mutableMapOf<String, Int>()
     var postfixResult = ""
 
-    private fun subtract(a:Int, b:Int):Int {
-        return a - b
-    }
-
-    private fun divide(a:Int, b:Int):Int {
-        return a / b
-    }
-    private fun power(a:Int, b:Int):Int {
-        return a.toDouble().pow(b.toDouble()).toInt()
-    }
-
-    @ExperimentalStdlibApi
-    fun MutableList<Int>.performOperation(operator:String):Int {
-        return when (operator) {
-            "*" -> removeLast() * removeLast()
-            "/" -> divide(b=removeLast() , a= removeLast())
-            "^" -> power(b=removeLast() , a= removeLast())
-            "-" -> {
-                if (size == 1) - removeLast()
-                else subtract(b=removeLast(), a=removeLast())
-            }
-            "+" -> removeLast() + removeLast()
-            else -> 0
-        }
-    }
-    @ExperimentalStdlibApi
-    fun sumOfPostfix(elements: String):Int {
-        val stack = mutableListOf<Int>()
-
-//        println(elements)
-        elements
-            .trim()
-            .split(" ")
-            .map{it.trim()}
-            .forEach{element ->
-                when {
-                    element.isAVariable() -> {
-                        if (variables.containsKey(element)) stack.add(variables[element]!!.toInt())
-                        else throw ArithmeticException()
-                    }
-                    element.isOperator() -> {
-                        stack.add(stack.performOperation(element))
-                    }
-                    else -> stack.add(element.toInt())
-                }
-            }
-
-        return stack.last()
-
-    }
 
     fun sum(input: String) {
         try {
-//            println("input: $input")
             val postfix = toPostfix(input)
 
-//            println("postfix $postfix")
             val sumOfInput= sumOfPostfix(postfix)
 
             println(sumOfInput)
@@ -103,8 +51,52 @@ class SmartCalculator {
 
     }
 
+    private fun subtract(a:Int, b:Int):Int = a - b
+    private fun divide(a:Int, b:Int):Int = a / b
+    private fun power(a:Int, b:Int):Int = a.toDouble().pow(b.toDouble()).toInt()
+
     @ExperimentalStdlibApi
-    fun MutableList<String>.popToPostfixResult():String{
+    fun MutableList<Int>.performOperation(operator:String):Int {
+        return when (operator) {
+            "*" -> removeLast() * removeLast()
+            "/" -> divide(b=removeLast() , a= removeLast())
+            "^" -> power(b=removeLast() , a= removeLast())
+            "-" -> {
+                if (size == 1) - removeLast()
+                else subtract(b=removeLast(), a=removeLast())
+            }
+            "+" -> removeLast() + removeLast()
+            else -> 0
+        }
+    }
+
+    @ExperimentalStdlibApi
+    fun sumOfPostfix(elements: String):Int {
+        val stack = mutableListOf<Int>()
+
+        elements
+            .trim()
+            .split(" ")
+            .map{it.trim()}
+            .forEach{element ->
+                when {
+                    element.isAVariable() -> {
+                        if (variables.containsKey(element)) stack.add(variables[element]!!.toInt())
+                        else throw ArithmeticException()
+                    }
+                    element.isOperator() -> {
+                        stack.add(stack.performOperation(element))
+                    }
+                    else -> stack.add(element.toInt())
+                }
+            }
+
+        return stack.last()
+
+    }
+
+    @ExperimentalStdlibApi
+    private fun MutableList<String>.popToPostfixResult():String{
         val last = removeLast()
         postfixResult += "$last "
         return last
@@ -134,39 +126,12 @@ class SmartCalculator {
         }
 
     }
-    private fun String.isMinusUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
-    private fun String.isPositiveUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
-
     @ExperimentalStdlibApi
     fun toPostfix(input: String):String {
         postfixResult = ""
         val stack = mutableListOf<String>()
 
-        val reg = Regex("(?<=[0-9a-zA-Z ])(?=[-+()*/^=])|(?<=[-+()*/^=])(?=[0-9a-zA-Z ])")
-
-//        println("input: $input")
-
-        val inputList = input
-                .split(reg)
-                .map{it.trim()}
-                .map{
-                    if(it.isMinusUnaryOperator()) {
-                        if (it.length % 2 == 0){
-                            "+"
-                        }
-                        else "-"
-                    }else if (it.isPositiveUnaryOperator()) "+"
-                    else it
-                }
-                .flatMap { x ->
-                    if (x.isOperatorGroup()) x.split("").map{it.trim()}.filterNot{it == ""}
-                    else listOf(x)
-                }
-                .filterNot{it == ""}
-
-//        println(inputList )
-
-        inputList
+       input.toMathList()
             .forEach{element ->
                 when {
                     (element.isAVariable() || element.isNumber()) ->
@@ -208,14 +173,11 @@ class SmartCalculator {
 
         val (i, v) = line.split("=").map { it.trim() }
 
-//        println("V: $v")
-
         try {
             if (i.isAVariable()){
                 if (variables.containsKey(v)) variables[i] = variables[v]!!.toInt()
                 else{
                     if (v.isNumber()) {
-//                        println(v)
                         variables[i] = v.toInt()
                     }
                     else throw Exception()
@@ -225,6 +187,31 @@ class SmartCalculator {
         }catch (e: Exception){
             println("Invalid assignment")
         }
+
+    }
+
+    private fun String.isMinusUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
+    private fun String.isPositiveUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
+
+    private fun String.toMathList():List<String> {
+        val reg = Regex("(?<=$alphaNumeric)(?=$operatorGroupMatcher)|(?<=$operatorGroupMatcher)(?=$alphaNumeric)")
+
+        return split(reg)
+            .map{it.trim()}
+            .map{
+                if(it.isMinusUnaryOperator()) {
+                    if (it.length % 2 == 0){
+                        "+"
+                    }
+                    else "-"
+                }else if (it.isPositiveUnaryOperator()) "+"
+                else it
+            }
+            .flatMap { x ->
+                if (x.isOperatorGroup()) x.split("").map{it.trim()}.filterNot{it == ""}
+                else listOf(x)
+            }
+            .filterNot{it == ""}
 
     }
 
@@ -254,9 +241,14 @@ class SmartCalculator {
         else println("Unknown variable")
     }
 
-    private fun String.isAVariable(): Boolean = matches(Regex("[a-zA-Z]+"))
-    private fun String.isOperator(): Boolean = matches(Regex("[+\\-*/()^]+"))
-    private fun String.isOperatorGroup(): Boolean = matches(Regex("[+\\-*/()=^ ]+"))
+    private val operatorMatcher = "[-+()*/^=]"
+    private val operatorGroupMatcher = "[-+()*/^= ]"
+    private val variableMatcher = "[a-zA-Z]"
+    private val alphaNumeric = "[0-9a-zA-Z]"
+
+    private fun String.isAVariable(): Boolean = matches(Regex("$variableMatcher+"))
+    private fun String.isOperator(): Boolean = matches(Regex("$operatorMatcher+"))
+    private fun String.isOperatorGroup(): Boolean = matches(Regex("$operatorGroupMatcher+"))
     private fun String.isNumber() : Boolean =  matches(Regex("-?[0-9]+"))
     private fun String.isUnaryMinusForStack(): Boolean =
         this == "-" && (postfixResult.lastOrNull().toString().isOperator() || postfixResult == "")
