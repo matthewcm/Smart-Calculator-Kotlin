@@ -4,83 +4,24 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.lang.Exception
 
 internal class SmartCalculatorTest {
 
+    @ExperimentalStdlibApi
     private var sc = SmartCalculator()
     private val myOut = ByteArrayOutputStream()
 
 
+    @ExperimentalStdlibApi
     @BeforeEach
     fun before() {
         System.setOut(PrintStream(myOut))
         sc = SmartCalculator()
     }
 
-    @Test
-    fun `Given '10 + 12' is input, When sum is invoked, then it should print 22`() {
-//         Given
-        val x = 10
-        val y = 12
-        val operation = '+'
 
-
-//        WHEN
-        sc.sum("$x $operation $y")
-
-//        THEN
-        val sum = myOut.toString().trim().toInt()
-        assertEquals(22, sum)
-
-    }
-
-    @Test
-    fun `Given '10 - 12' is input, When sum is invoked, then it should print -2`() {
-//         Given
-        val x = 10
-        val y = 12
-        val operation = '-'
-
-
-//        WHEN
-        sc.sum("$x $operation $y")
-
-//        THEN
-        val sum = myOut.toString().trim().toInt()
-        assertEquals(-2, sum)
-
-    }
-
-    @Test
-    fun `Given '10 - 12 - 2' is input, When sum is invoked, then it should print -4`() {
-//         Given
-        val input = "10 - 12 - 2"
-
-
-//        WHEN
-        sc.sum(input)
-
-//        THEN
-        val sum = myOut.toString().trim().toInt()
-        assertEquals(-4, sum)
-
-    }
-
-    @Test
-    fun `Given '-10 - 12 - 2' is input, When sum is invoked, then it should print -4`() {
-//         Given
-        val input = "-10 - 12 - 2"
-
-
-//        WHEN
-        sc.sum(input)
-
-//        THEN
-        val sum = myOut.toString().trim().toInt()
-        assertEquals(-24, sum)
-
-    }
-
+    @ExperimentalStdlibApi
     @Test
     fun `Given 'exit' is input, When multisum is invoked, then it should exit the program`() {
 //         Given
@@ -98,6 +39,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given 'help' is input, When multisum is invoked, then it should print information about the program`() {
 //         Given
@@ -115,6 +57,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given 'help' is input, When multisum is invoked, then it should print information about the program and continue`() {
 //         Given
@@ -133,6 +76,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given '10 12 13' is input, When sum is invoked, then it should print 35`() {
 //         Given
@@ -150,6 +94,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given '10 - 12 -- 13' is input, When sum is invoked, then it should print 11`() {
 //         Given
@@ -167,6 +112,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given '10 --- 12' is input, When sum is invoked, then it should print -2`() {
 //         Given
@@ -183,6 +129,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given '---10' is input, When sum is invoked, then it should print -10`() {
 //         Given
@@ -198,6 +145,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given '10 + 12' '5 + 6' as two inputs, When multiSum is invoked, then it should print 22 and print 11`() {
 //         Given
@@ -221,6 +169,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given '10 + 12 + 13' '5 + 6 + 5 + 6' as two inputs, When multiSum is invoked, then it should print 35 and print 22`() {
 //         Given
@@ -244,6 +193,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given '' '' as two inputs, When multiSum is invoked, then it should not print anything`() {
 //         Given
@@ -260,8 +210,9 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
-    fun `Given '10abc' '' as two inputs, When multiSum is invoked, then it should print Invalid Expression`() {
+    fun `Given '10abc' '' as two inputs, When multiSum is invoked, then it should print Invalid expression`() {
 //         Given
         val input = "10abc\n\n"
         val inp = ByteArrayInputStream(input.toByteArray())
@@ -272,12 +223,13 @@ internal class SmartCalculatorTest {
 
 //        THEN
         val result = myOut.toString().trim()
-        assertEquals("Invalid Expression", result)
+        assertEquals("Invalid expression", result)
 
     }
 
+    @ExperimentalStdlibApi
     @Test
-    fun `Given '10+' is input, When sum is invoked, then it should Invalid Expression`() {
+    fun `Given '10+' is input, When sum is invoked, then it should Invalid expression`() {
 //         Given
         val input = "10+"
 
@@ -287,12 +239,13 @@ internal class SmartCalculatorTest {
 
 //        THEN
         val sum = myOut.toString().trim()
-        assertEquals("Invalid Expression", sum)
+        assertEquals("Invalid expression", sum)
 
     }
 
+    @ExperimentalStdlibApi
     @Test
-    fun `Given command 'abc', When multiSum is invoked, then it should print Unknown Command`() {
+    fun `Given command 'abc', When multiSum is invoked, then it should print Unknown command`() {
 //         Given
         val input = "/abc\n\n"
         val inp = ByteArrayInputStream(input.toByteArray())
@@ -303,10 +256,11 @@ internal class SmartCalculatorTest {
 
 //        THEN
         val result = myOut.toString().trim()
-        assertEquals("Unknown Command", result)
+        assertEquals("Unknown command", result)
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'n = 10' 'n' , When multiSum is invoked, then it should print 10`() {
 //         Given
@@ -322,6 +276,7 @@ internal class SmartCalculatorTest {
         assertEquals(10, result)
 
     }
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'n =10' 'n' , When multiSum is invoked, then it should print 10`() {
 //         Given
@@ -337,6 +292,23 @@ internal class SmartCalculatorTest {
         assertEquals(10, result)
 
     }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input 'n = -10' 'n' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "n  = -10\n n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(-10, result)
+
+    }
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'MINI =10' 'MINI' , When multiSum is invoked, then it should print 10`() {
 //         Given
@@ -353,6 +325,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'n =10' 'b = n' 'b' , When multiSum is invoked, then it should print 10`() {
 //         Given
@@ -368,6 +341,7 @@ internal class SmartCalculatorTest {
         assertEquals(10, result)
 
     }
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'n =10' 'b' , When multiSum is invoked, then it should print Unknown variable`() {
 //         Given
@@ -383,6 +357,7 @@ internal class SmartCalculatorTest {
         assertEquals("Unknown variable", result)
 
     }
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'n =10' 'b = 5' 'a + b' , When multiSum is invoked, then it should print 15`() {
 //         Given
@@ -398,6 +373,7 @@ internal class SmartCalculatorTest {
         assertEquals(15, result)
 
     }
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'n =10' 'b = 5' 'a + b' , When multiSum is invoked, then it should print Unknown variable`() {
 //         Given
@@ -413,6 +389,7 @@ internal class SmartCalculatorTest {
         assertEquals("Unknown variable", result)
 
     }
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'var1 = 10' , When multiSum is invoked, then it should print Invalid assignment`() {
 //         Given
@@ -429,6 +406,7 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     fun `Given input 'var = 10b0' , When multiSum is invoked, then it should print Invalid assignment`() {
 //         Given
@@ -442,6 +420,171 @@ internal class SmartCalculatorTest {
 //        THEN
         val result = myOut.toString().trim()
         assertEquals("Invalid assignment", result)
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 + 2',When toPostfix is invoked, convert to '1 2 +`(){
+
+        val input = "1 + 2"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 + ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 - 2',When toPostfix is invoked, convert to '1 2 -`(){
+
+        val input = "1 - 2"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 - ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 - 2 + 3',When toPostfix is invoked, convert to '1 2 - 3 + `(){
+
+        val input = "1 - 2 + 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 - 3 + ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 - 2 * 3',When toPostfix is invoked, convert to '1 2 3 * - `(){
+
+        val input = "1 - 2 * 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 3 * - ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '(1 - 2) * 3',When toPostfix is invoked, convert to '1 2 - 3 *  `(){
+
+        val input = "(1 - 2) * 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 - 3 * ", postfix)
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '(-1 - 2) * 3',When toPostfix is invoked, convert to '1 2 - 3 *  `(){
+
+        val input = "(-1 - 2) * 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("-1 2 - 3 * ", postfix)
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '8 * 3 + 12 * (4 - 2)',When toPostfix is invoked, convert to '1 2 - 3 *  `(){
+
+        val infix = "8 * 3 + 12 * (4 - 2)"
+
+        val postfix= sc.toPostfix(infix)
+
+
+        assertEquals("8 3 * 12 4 2 - * + ", postfix)
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '-1 2 - 3 * ',When sum2 is invoked, calculate -9 `(){
+
+        val input = "-1 2 - 3 * "
+
+        val sum = sc.sumOfPostfix(input)
+
+        assertEquals(-9, sum )
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '8 * 3 + 12 * (4 - 2)',When postfix & sum2 is invoked, calculate 48 `(){
+
+        val infix = "8 * 3 + 12 * (4 - 2)"
+        val postfix=sc.toPostfix(infix)
+        assertEquals("8 3 * 12 4 2 - * + ", postfix)
+
+        val sum = sc.sumOfPostfix(postfix)
+
+        assertEquals(48, sum )
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '91 div 13',When postfix & sum2 is invoked, calculate 7 `(){
+
+        val infix = "91 / 13"
+        val postfix=sc.toPostfix(infix)
+        assertEquals("91 13 / ", postfix)
+
+        val sum = sc.sumOfPostfix(postfix)
+
+        assertEquals(7, sum )
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '2 ^ 8',When postfix & sum2 is invoked, calculate 256`(){
+
+        val infix = "2 ^ 8"
+        val postfix=sc.toPostfix(infix)
+        assertEquals("2 8 ^ ", postfix)
+
+        val sum = sc.sumOfPostfix(postfix)
+
+        assertEquals(256, sum )
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input '8 * (2 + 3' , When multiSum is invoked, then it should print Invalid expression`() {
+//         Given
+        val input = "8 * (2 + 3"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Invalid expression", result)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '8 * (2 + 3',When postfix is invoked, throw`(){
+
+        val infix = "8 * (2 + 3"
+        try {
+            val postfix=sc.toPostfix(infix)
+            assertEquals(Unit, postfix)
+        }catch(e:Exception){
+            assert(true)
+
+        }
+
 
     }
 
