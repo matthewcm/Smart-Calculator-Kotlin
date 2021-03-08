@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.lang.Exception
 
 internal class SmartCalculatorTest {
 
@@ -293,6 +294,22 @@ internal class SmartCalculatorTest {
     }
     @ExperimentalStdlibApi
     @Test
+    fun `Given input 'n = -10' 'n' , When multiSum is invoked, then it should print 10`() {
+//         Given
+        val input = "n  = -10\n n\n"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim().toInt()
+        assertEquals(-10, result)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
     fun `Given input 'MINI =10' 'MINI' , When multiSum is invoked, then it should print 10`() {
 //         Given
         val input = "MINI  =10\n MINI\n"
@@ -510,6 +527,64 @@ internal class SmartCalculatorTest {
         val sum = sc.sumOfPostfix(postfix)
 
         assertEquals(48, sum )
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '91 div 13',When postfix & sum2 is invoked, calculate 7 `(){
+
+        val infix = "91 / 13"
+        val postfix=sc.toPostfix(infix)
+        assertEquals("91 13 / ", postfix)
+
+        val sum = sc.sumOfPostfix(postfix)
+
+        assertEquals(7, sum )
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '2 ^ 8',When postfix & sum2 is invoked, calculate 256`(){
+
+        val infix = "2 ^ 8"
+        val postfix=sc.toPostfix(infix)
+        assertEquals("2 8 ^ ", postfix)
+
+        val sum = sc.sumOfPostfix(postfix)
+
+        assertEquals(256, sum )
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input '8 * (2 + 3' , When multiSum is invoked, then it should print Invalid Expression`() {
+//         Given
+        val input = "8 * (2 + 3"
+        val inp = ByteArrayInputStream(input.toByteArray())
+        System.setIn(inp)
+
+//        WHEN
+        sc.multiSum()
+
+//        THEN
+        val result = myOut.toString().trim()
+        assertEquals("Invalid Expression", result)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '8 * (2 + 3',When postfix is invoked, throw`(){
+
+        val infix = "8 * (2 + 3"
+        try {
+            val postfix=sc.toPostfix(infix)
+            assertEquals(Unit, postfix)
+        }catch(e:Exception){
+            assert(true)
+
+        }
+
 
     }
 

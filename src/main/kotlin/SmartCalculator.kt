@@ -2,22 +2,31 @@ import java.io.ByteArrayInputStream
 import java.lang.ArithmeticException
 import java.lang.Exception
 import java.util.*
+import javax.print.DocFlavor
+import kotlin.math.pow
 
 @ExperimentalStdlibApi
 class SmartCalculator {
     private var variables = mutableMapOf<String, Int>()
-    private var sign = 1
     var postfixResult = ""
 
     private fun subtract(a:Int, b:Int):Int {
         return a - b
     }
 
+    private fun divide(a:Int, b:Int):Int {
+        return a / b
+    }
+    private fun power(a:Int, b:Int):Int {
+        return a.toDouble().pow(b.toDouble()).toInt()
+    }
+
     @ExperimentalStdlibApi
     fun MutableList<Int>.performOperation(operator:String):Int {
         return when (operator) {
             "*" -> removeLast() * removeLast()
-            "/" -> removeLast() / removeLast()
+            "/" -> divide(b=removeLast() , a= removeLast())
+            "^" -> power(b=removeLast() , a= removeLast())
             "-" -> {
                 if (size == 1) - removeLast()
                 else subtract(b=removeLast(), a=removeLast())
@@ -30,6 +39,7 @@ class SmartCalculator {
     fun sumOfPostfix(elements: String):Int {
         val stack = mutableListOf<Int>()
 
+//        println(elements)
         elements
             .trim()
             .split(" ")
@@ -53,13 +63,17 @@ class SmartCalculator {
 
     fun sum(input: String) {
         try {
+//            println("input: $input")
             val postfix = toPostfix(input)
+
+//            println("postfix $postfix")
             val sumOfInput= sumOfPostfix(postfix)
 
             println(sumOfInput)
         } catch (e: ArithmeticException) {
             println("Unknown variable")
         } catch (e: Exception) {
+//            println(e.message)
             println("Invalid Expression")
         }
     }
@@ -72,6 +86,7 @@ class SmartCalculator {
             val nextLine = scanner.nextLine()
 
             val line = nextLine.toString().trim()
+//            println(line)
 
             try {
 
@@ -89,8 +104,8 @@ class SmartCalculator {
     }
 
     @ExperimentalStdlibApi
-    fun MutableList<String>.popToPostfixResult():String {
-        var last = removeLast()
+    fun MutableList<String>.popToPostfixResult():String{
+        val last = removeLast()
         postfixResult += "$last "
         return last
     }
@@ -98,15 +113,22 @@ class SmartCalculator {
     private fun MutableList<String>.nextHasHigherPrecedenceThan(operator :String):Boolean {
         val top = this.last()
         return when {
-            top.matches(Regex("[/*]")) -> {
+            top.matches(Regex("[\\^]")) -> {
                 when {
                     operator.matches(Regex("[()]")) -> false
+                    operator.matches(Regex("[-+/*]")) -> true
+                    else -> true
+                }
+            }
+            top.matches(Regex("[/*]")) -> {
+                when {
+                    operator.matches(Regex("[()^]")) -> false
                     operator.matches(Regex("[-+]")) -> true
                     else -> true
                 }
             }
             top.matches(Regex("[-+]")) -> {
-                !operator.matches(Regex("[/*()]"))
+                !operator.matches(Regex("[/*()^]"))
             }
             else -> true
         }
@@ -117,9 +139,12 @@ class SmartCalculator {
 
     @ExperimentalStdlibApi
     fun toPostfix(input: String):String {
-        var stack = mutableListOf<String>()
+        postfixResult = ""
+        val stack = mutableListOf<String>()
 
-        val reg = Regex("(?<=[0-9a-zA-Z ])(?=[-+()*\\/])|(?<=[-+()*\\/])(?=[0-9a-zA-Z ])")
+        val reg = Regex("(?<=[0-9a-zA-Z ])(?=[-+()*/^=])|(?<=[-+()*/^=])(?=[0-9a-zA-Z ])")
+
+//        println("input: $input")
 
         val inputList = input
                 .split(reg)
@@ -137,6 +162,7 @@ class SmartCalculator {
                     if (x.isOperatorGroup()) x.split("").map{it.trim()}.filterNot{it == ""}
                     else listOf(x)
                 }
+                .filterNot{it == ""}
 
 //        println(inputList )
 
@@ -148,7 +174,7 @@ class SmartCalculator {
                     element.isOperator() ->
                         when {
 
-                            element.isUnaryMinusForStack() -> postfixResult += "$element"
+                            element.isUnaryMinusForStack() -> postfixResult += element
 
                             stack.isEmpty() || stack.last() == "(" -> stack.add(element)
 
@@ -167,48 +193,14 @@ class SmartCalculator {
                                 stack.add(element)
                             }
                         }
+                    else -> throw Exception()
                 }
             }
 
         while (stack.size > 0){
-            stack.popToPostfixResult()
+            if (stack.popToPostfixResult() == "(") throw Exception()
         }
         return postfixResult
-    }
-
-
-    private fun subtractNextOperand(): Int {
-        sign = -1
-        return 0
-    }
-
-    private fun addNextOperand(): Int {
-        sign = 1
-        return 0
-    }
-
-    private fun performOperationOnOperand(num: Int): Int {
-        val result = sign * num
-        sign = 1
-        return result
-    }
-
-    private fun calculateSumOfString(nums: String): Int {
-        return nums.split(" ").map { num ->
-            when {
-                num.isPositiveUnaryOperator() -> addNextOperand()
-                num.isMinusUnaryOperator() -> {
-                    if (num.length % 2 == 1) subtractNextOperand()
-                    else addNextOperand()
-                }
-                num.isAVariable() -> {
-                    if (variables.containsKey(num)) performOperationOnOperand(variables[num]!!.toInt())
-                    else throw ArithmeticException()
-                }
-                else -> performOperationOnOperand(num.toInt())
-
-            }
-        }.reduce { numSum, num -> numSum + num }
     }
 
 
@@ -216,11 +208,16 @@ class SmartCalculator {
 
         val (i, v) = line.split("=").map { it.trim() }
 
+//        println("V: $v")
+
         try {
             if (i.isAVariable()){
                 if (variables.containsKey(v)) variables[i] = variables[v]!!.toInt()
                 else{
-                    if (v.isNumber()) variables[i] = v.toInt()
+                    if (v.isNumber()) {
+//                        println(v)
+                        variables[i] = v.toInt()
+                    }
                     else throw Exception()
                 }
             }else throw Exception()
@@ -258,11 +255,9 @@ class SmartCalculator {
     }
 
     private fun String.isAVariable(): Boolean = matches(Regex("[a-zA-Z]+"))
-    private fun String.isOperator(): Boolean = matches(Regex("[+\\-*/()]+"))
-    private fun String.isOperatorGroup(): Boolean = matches(Regex("[+\\-*/() ]+"))
-    private fun String.isNumber() : Boolean {
-        return if (isNullOrEmpty()) false else all { Character.isDigit(it) }
-    }
+    private fun String.isOperator(): Boolean = matches(Regex("[+\\-*/()^]+"))
+    private fun String.isOperatorGroup(): Boolean = matches(Regex("[+\\-*/()=^ ]+"))
+    private fun String.isNumber() : Boolean =  matches(Regex("-?[0-9]+"))
     private fun String.isUnaryMinusForStack(): Boolean =
         this == "-" && (postfixResult.lastOrNull().toString().isOperator() || postfixResult == "")
 }
@@ -270,18 +265,41 @@ class SmartCalculator {
 @ExperimentalStdlibApi
 fun main() {
 //    val input = "10 12\n5 6\n00"
-    val input = "10abc\n\n"
-    val inp = ByteArrayInputStream(input.toByteArray())
+    var input = "10abc\n\n"
+    var inp = ByteArrayInputStream(input.toByteArray())
     System.setIn(inp)
 
-    val sc = SmartCalculator()
+    var sc = SmartCalculator()
+    sc.multiSum()
+
+    input = "h = -10 \n h\n"
+    inp = ByteArrayInputStream(input.toByteArray())
+    System.setIn(inp)
+
+    sc = SmartCalculator()
     sc.multiSum()
 
     val infix = "8 * 3 +++ 12 * (4 --- 2)"
 //    val infix = "1 - 2 * 3"
-    val postfix=sc.toPostfix(infix)
-    println(postfix)
+    try {
+        sc = SmartCalculator()
+        val postfix=sc.toPostfix(infix)
+        println(postfix)
 
-    println(sc.sum(postfix))
+        println(sc.sumOfPostfix(postfix))
+
+    }catch(e:Exception){
+        println("Unknown variable")
+    }
+
+    input = "(-1 - 2) * 3"
+
+    sc = SmartCalculator()
+    val postfix2 = sc.toPostfix(input)
+    println(postfix2)
+
+    input = "2 ^ 8"
+    val postfix=sc.toPostfix(input)
+    println(postfix)
 
 }
