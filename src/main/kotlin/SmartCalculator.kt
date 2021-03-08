@@ -3,12 +3,13 @@ import java.lang.ArithmeticException
 import java.lang.Exception
 import java.util.*
 
+@ExperimentalStdlibApi
 class SmartCalculator {
     private var variables = mutableMapOf<String, Int>()
     private var sign = 1
     var postfixResult = ""
 
-    fun subtract(a:Int, b:Int):Int {
+    private fun subtract(a:Int, b:Int):Int {
         return a - b
     }
 
@@ -26,15 +27,8 @@ class SmartCalculator {
         }
     }
     @ExperimentalStdlibApi
-    fun sum2(elements: String):Int {
+    fun sumOfPostfix(elements: String):Int {
         val stack = mutableListOf<Int>()
-
-        println(
-            elements
-            .trim()
-            .split(" ")
-            .map{it.trim()}
-        )
 
         elements
             .trim()
@@ -42,24 +36,27 @@ class SmartCalculator {
             .map{it.trim()}
             .forEach{element ->
                 when {
-                    element.isAVariable() -> stack.add(variables[element]!!.toInt())
+                    element.isAVariable() -> {
+                        if (variables.containsKey(element)) stack.add(variables[element]!!.toInt())
+                        else throw ArithmeticException()
+                    }
                     element.isOperator() -> {
                         stack.add(stack.performOperation(element))
                     }
                     else -> stack.add(element.toInt())
                 }
-                println(stack)
             }
 
         return stack.last()
 
     }
 
-    fun sum(nums: String) {
+    fun sum(input: String) {
         try {
-            val numsSum = calculateSumOfString(nums)
+            val postfix = toPostfix(input)
+            val sumOfInput= sumOfPostfix(postfix)
 
-            println(numsSum)
+            println(sumOfInput)
         } catch (e: ArithmeticException) {
             println("Unknown variable")
         } catch (e: Exception) {
@@ -67,6 +64,7 @@ class SmartCalculator {
         }
     }
 
+    @ExperimentalStdlibApi
     fun multiSum() {
         val scanner = Scanner(System.`in`)
 
@@ -114,24 +112,35 @@ class SmartCalculator {
         }
 
     }
+    private fun String.isMinusUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
+    private fun String.isPositiveUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
+
     @ExperimentalStdlibApi
     fun toPostfix(input: String):String {
         var stack = mutableListOf<String>()
 
+        val reg = Regex("(?<=[0-9a-zA-Z ])(?=[-+()*\\/])|(?<=[-+()*\\/])(?=[0-9a-zA-Z ])")
 
-        val reg = Regex("(?<=[+\\-*/()])|(?=[+\\-*/()])")
-//        println(input
-//            .trim()
-//            .split(reg)
-//            .filterNot{it == ""}
-//            .map{it.trim()}
-//        )
+        val inputList = input
+                .split(reg)
+                .map{it.trim()}
+                .map{
+                    if(it.isMinusUnaryOperator()) {
+                        if (it.length % 2 == 0){
+                            "+"
+                        }
+                        else "-"
+                    }else if (it.isPositiveUnaryOperator()) "+"
+                    else it
+                }
+                .flatMap { x ->
+                    if (x.isOperatorGroup()) x.split("").map{it.trim()}.filterNot{it == ""}
+                    else listOf(x)
+                }
 
-        input
-            .trim()
-            .split(reg)
-            .filterNot{it == ""}
-            .map{it.trim()}
+//        println(inputList )
+
+        inputList
             .forEach{element ->
                 when {
                     (element.isAVariable() || element.isNumber()) ->
@@ -139,13 +148,9 @@ class SmartCalculator {
                     element.isOperator() ->
                         when {
 
-                            element == "-" && (postfixResult.lastOrNull().toString().isOperator() || postfixResult == "") -> {
-                                // Unary Operator
-                                postfixResult += "$element"
-                            }
-                            stack.isEmpty() || stack.last() == "(" -> {
-                                stack.add(element)
-                            }
+                            element.isUnaryMinusForStack() -> postfixResult += "$element"
+
+                            stack.isEmpty() || stack.last() == "(" -> stack.add(element)
 
                             element == "(" -> stack.add(element)
 
@@ -163,7 +168,6 @@ class SmartCalculator {
                             }
                         }
                 }
-//                println(stack)
             }
 
         while (stack.size > 0){
@@ -192,8 +196,8 @@ class SmartCalculator {
     private fun calculateSumOfString(nums: String): Int {
         return nums.split(" ").map { num ->
             when {
-                num.isAPositiveBinaryOperator() -> addNextOperand()
-                num.isANegativeBinaryOperator() -> {
+                num.isPositiveUnaryOperator() -> addNextOperand()
+                num.isMinusUnaryOperator() -> {
                     if (num.length % 2 == 1) subtractNextOperand()
                     else addNextOperand()
                 }
@@ -253,29 +257,31 @@ class SmartCalculator {
         else println("Unknown variable")
     }
 
-    private fun String.isANegativeBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
-    private fun String.isAPositiveBinaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
     private fun String.isAVariable(): Boolean = matches(Regex("[a-zA-Z]+"))
-    private fun String.isOperator(): Boolean = matches(Regex("[+\\-*/()]"))
+    private fun String.isOperator(): Boolean = matches(Regex("[+\\-*/()]+"))
+    private fun String.isOperatorGroup(): Boolean = matches(Regex("[+\\-*/() ]+"))
     private fun String.isNumber() : Boolean {
         return if (isNullOrEmpty()) false else all { Character.isDigit(it) }
     }
+    private fun String.isUnaryMinusForStack(): Boolean =
+        this == "-" && (postfixResult.lastOrNull().toString().isOperator() || postfixResult == "")
 }
 
 @ExperimentalStdlibApi
 fun main() {
-    val input = "10 12\n5 6\n00"
+//    val input = "10 12\n5 6\n00"
+    val input = "10abc\n\n"
     val inp = ByteArrayInputStream(input.toByteArray())
     System.setIn(inp)
 
     val sc = SmartCalculator()
     sc.multiSum()
 
-    val infix = "8 * 3 + 12 * (4 - 2)"
+    val infix = "8 * 3 +++ 12 * (4 --- 2)"
 //    val infix = "1 - 2 * 3"
     val postfix=sc.toPostfix(infix)
     println(postfix)
 
-    println(sc.sum2(postfix))
+    println(sc.sum(postfix))
 
 }
