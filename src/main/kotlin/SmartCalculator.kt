@@ -2,13 +2,22 @@ import java.io.ByteArrayInputStream
 import java.lang.ArithmeticException
 import java.lang.Exception
 import java.util.*
-import javax.print.DocFlavor
 import kotlin.math.pow
 
 @ExperimentalStdlibApi
 class SmartCalculator {
     private var variables = mutableMapOf<String, Int>()
     var postfixResult = ""
+
+    private val operatorPriority= mapOf(
+        "(" to 3,
+        ")" to 3,
+        "^" to 2,
+        "*" to 1,
+        "/" to 1,
+        "-" to 0,
+        "+" to 0
+    )
 
 
     fun sum(input: String) {
@@ -18,11 +27,8 @@ class SmartCalculator {
             val sumOfInput= sumOfPostfix(postfix)
 
             println(sumOfInput)
-        } catch (e: ArithmeticException) {
-            println("Unknown variable")
         } catch (e: Exception) {
-//            println(e.message)
-            println("Invalid Expression")
+            println(e.message)
         }
     }
 
@@ -34,7 +40,7 @@ class SmartCalculator {
             val nextLine = scanner.nextLine()
 
             val line = nextLine.toString().trim()
-//            println(line)
+            if (line == "") continue
 
             try {
 
@@ -45,6 +51,7 @@ class SmartCalculator {
                     else -> sum(line)
                 }
             } catch (e: Exception) {
+                println(e.message)
                 continue
             }
         }
@@ -57,16 +64,21 @@ class SmartCalculator {
 
     @ExperimentalStdlibApi
     fun MutableList<Int>.performOperation(operator:String):Int {
-        return when (operator) {
-            "*" -> removeLast() * removeLast()
-            "/" -> divide(b=removeLast() , a= removeLast())
-            "^" -> power(b=removeLast() , a= removeLast())
-            "-" -> {
-                if (size == 1) - removeLast()
-                else subtract(b=removeLast(), a=removeLast())
+        try {
+            return when (operator) {
+                "*" -> removeLast() * removeLast()
+                "/" -> divide(b=removeLast() , a= removeLast())
+                "^" -> power(b=removeLast() , a= removeLast())
+                "-" -> {
+                    if (size == 1) - removeLast()
+                    else subtract(b=removeLast(), a=removeLast())
+                }
+                "+" -> removeLast() + removeLast()
+
+                else -> throw InvalidExpressionException()
             }
-            "+" -> removeLast() + removeLast()
-            else -> 0
+        } catch (e :Exception){
+            throw InvalidExpressionException()
         }
     }
 
@@ -82,7 +94,7 @@ class SmartCalculator {
                 when {
                     element.isAVariable() -> {
                         if (variables.containsKey(element)) stack.add(variables[element]!!.toInt())
-                        else throw ArithmeticException()
+                        else throw UnknownVariableException()
                     }
                     element.isOperator() -> {
                         stack.add(stack.performOperation(element))
@@ -103,29 +115,12 @@ class SmartCalculator {
     }
 
     private fun MutableList<String>.nextHasHigherPrecedenceThan(operator :String):Boolean {
-        val top = this.last()
-        return when {
-            top.matches(Regex("[\\^]")) -> {
-                when {
-                    operator.matches(Regex("[()]")) -> false
-                    operator.matches(Regex("[-+/*]")) -> true
-                    else -> true
-                }
-            }
-            top.matches(Regex("[/*]")) -> {
-                when {
-                    operator.matches(Regex("[()^]")) -> false
-                    operator.matches(Regex("[-+]")) -> true
-                    else -> true
-                }
-            }
-            top.matches(Regex("[-+]")) -> {
-                !operator.matches(Regex("[/*()^]"))
-            }
-            else -> true
-        }
+        val topOfStackPriority = (operatorPriority[this.last()] ?: error("")).toInt()
+        val incomingOperatorPriority = (operatorPriority[operator] ?: error("")).toInt()
 
+        return topOfStackPriority >= incomingOperatorPriority
     }
+
     @ExperimentalStdlibApi
     fun toPostfix(input: String):String {
         postfixResult = ""
@@ -139,7 +134,7 @@ class SmartCalculator {
                     element.isOperator() ->
                         when {
 
-                            element.isUnaryMinusForStack() -> postfixResult += element
+                            element.isUnaryMinusOnResult() -> postfixResult += element
 
                             stack.isEmpty() || stack.last() == "(" -> stack.add(element)
 
@@ -158,12 +153,12 @@ class SmartCalculator {
                                 stack.add(element)
                             }
                         }
-                    else -> throw Exception()
+                    else -> throw InvalidExpressionException()
                 }
             }
 
         while (stack.size > 0){
-            if (stack.popToPostfixResult() == "(") throw Exception()
+            if (stack.popToPostfixResult() == "(") throw InvalidExpressionException()
         }
         return postfixResult
     }
@@ -180,18 +175,16 @@ class SmartCalculator {
                     if (v.isNumber()) {
                         variables[i] = v.toInt()
                     }
-                    else throw Exception()
+                    else throw InvalidAssignmentException()
                 }
-            }else throw Exception()
+            }else throw InvalidAssignmentException()
 
         }catch (e: Exception){
-            println("Invalid assignment")
+            println(e.message)
         }
 
     }
 
-    private fun String.isMinusUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
-    private fun String.isPositiveUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
 
     private fun String.toMathList():List<String> {
         val reg = Regex("(?<=$alphaNumeric)(?=$operatorGroupMatcher)|(?<=$operatorGroupMatcher)(?=$alphaNumeric)")
@@ -229,7 +222,7 @@ class SmartCalculator {
                 println("Supports / and * operations.")
                 println("Supports () parenthesis.")
             }
-            else -> println("Unknown Command")
+            else -> throw UnknownCommandException()
         }
 
         return true
@@ -250,8 +243,20 @@ class SmartCalculator {
     private fun String.isOperator(): Boolean = matches(Regex("$operatorMatcher+"))
     private fun String.isOperatorGroup(): Boolean = matches(Regex("$operatorGroupMatcher+"))
     private fun String.isNumber() : Boolean =  matches(Regex("-?[0-9]+"))
-    private fun String.isUnaryMinusForStack(): Boolean =
+    private fun String.isUnaryMinusOnResult(): Boolean =
         this == "-" && (postfixResult.lastOrNull().toString().isOperator() || postfixResult == "")
+
+    private fun String.isMinusUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '-'
+    private fun String.isPositiveUnaryOperator(): Boolean = toSet().size == 1 && toSet().first() == '+'
+
+    class UnknownCommandException(message: String = "Unknown command") : Exception(message)
+    class InvalidExpressionException(message: String = "Invalid expression") : Exception(message)
+    class UnknownVariableException(message: String = "Unknown variable") : Exception(message)
+    class InvalidAssignmentException(message: String = "Invalid assignment") : Exception(message)
+}
+
+class UnknownVariable {
+
 }
 
 @ExperimentalStdlibApi
@@ -272,7 +277,6 @@ fun main() {
     sc.multiSum()
 
     val infix = "8 * 3 +++ 12 * (4 --- 2)"
-//    val infix = "1 - 2 * 3"
     try {
         sc = SmartCalculator()
         val postfix=sc.toPostfix(infix)
@@ -290,8 +294,8 @@ fun main() {
     val postfix2 = sc.toPostfix(input)
     println(postfix2)
 
-    input = "2 ^ 8"
-    val postfix=sc.toPostfix(input)
-    println(postfix)
+    input = "10+"
+    val sum =sc.sum(input)
+    println(sum)
 
 }

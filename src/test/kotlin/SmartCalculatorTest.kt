@@ -212,7 +212,7 @@ internal class SmartCalculatorTest {
 
     @ExperimentalStdlibApi
     @Test
-    fun `Given '10abc' '' as two inputs, When multiSum is invoked, then it should print Invalid Expression`() {
+    fun `Given '10abc' '' as two inputs, When multiSum is invoked, then it should print Invalid expression`() {
 //         Given
         val input = "10abc\n\n"
         val inp = ByteArrayInputStream(input.toByteArray())
@@ -223,13 +223,13 @@ internal class SmartCalculatorTest {
 
 //        THEN
         val result = myOut.toString().trim()
-        assertEquals("Invalid Expression", result)
+        assertEquals("Invalid expression", result)
 
     }
 
     @ExperimentalStdlibApi
     @Test
-    fun `Given '10+' is input, When sum is invoked, then it should Invalid Expression`() {
+    fun `Given '10+' is input, When sum is invoked, then it should Invalid expression`() {
 //         Given
         val input = "10+"
 
@@ -239,13 +239,13 @@ internal class SmartCalculatorTest {
 
 //        THEN
         val sum = myOut.toString().trim()
-        assertEquals("Invalid Expression", sum)
+        assertEquals("Invalid expression", sum)
 
     }
 
     @ExperimentalStdlibApi
     @Test
-    fun `Given command 'abc', When multiSum is invoked, then it should print Unknown Command`() {
+    fun `Given command 'abc', When multiSum is invoked, then it should print Unknown command`() {
 //         Given
         val input = "/abc\n\n"
         val inp = ByteArrayInputStream(input.toByteArray())
@@ -256,7 +256,7 @@ internal class SmartCalculatorTest {
 
 //        THEN
         val result = myOut.toString().trim()
-        assertEquals("Unknown Command", result)
+        assertEquals("Unknown command", result)
 
     }
 
@@ -558,7 +558,7 @@ internal class SmartCalculatorTest {
     }
     @ExperimentalStdlibApi
     @Test
-    fun `Given input '8 * (2 + 3' , When multiSum is invoked, then it should print Invalid Expression`() {
+    fun `Given input '8 * (2 + 3' , When multiSum is invoked, then it should print Invalid expression`() {
 //         Given
         val input = "8 * (2 + 3"
         val inp = ByteArrayInputStream(input.toByteArray())
@@ -569,7 +569,7 @@ internal class SmartCalculatorTest {
 
 //        THEN
         val result = myOut.toString().trim()
-        assertEquals("Invalid Expression", result)
+        assertEquals("Invalid expression", result)
 
     }
     @ExperimentalStdlibApi
