@@ -445,4 +445,111 @@ internal class SmartCalculatorTest {
 
     }
 
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 + 2',When toPostfix is invoked, convert to '1 2 +`(){
+
+        val input = "1 + 2"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 + ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 - 2',When toPostfix is invoked, convert to '1 2 -`(){
+
+        val input = "1 - 2"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 - ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 - 2 + 3',When toPostfix is invoked, convert to '1 2 - 3 + `(){
+
+        val input = "1 - 2 + 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 - 3 + ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '1 - 2 * 3',When toPostfix is invoked, convert to '1 2 3 * - `(){
+
+        val input = "1 - 2 * 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 3 * - ", postfix)
+
+    }
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '(1 - 2) * 3',When toPostfix is invoked, convert to '1 2 - 3 *  `(){
+
+        val input = "(1 - 2) * 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("1 2 - 3 * ", postfix)
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '(-1 - 2) * 3',When toPostfix is invoked, convert to '1 2 - 3 *  `(){
+
+        val input = "(-1 - 2) * 3"
+
+        val postfix = sc.toPostfix(input)
+
+        assertEquals("-1 2 - 3 * ", postfix)
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '8 * 3 + 12 * (4 - 2)',When toPostfix is invoked, convert to '1 2 - 3 *  `(){
+
+        val infix = "8 * 3 + 12 * (4 - 2)"
+
+        val postfix= sc.toPostfix(infix)
+
+
+        assertEquals("8 3 * 12 4 2 - * + ", postfix)
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '-1 2 - 3 * ',When sum2 is invoked, calculate -9 `(){
+
+        val input = "-1 2 - 3 * "
+
+        val sum = sc.sum2(input)
+
+        assertEquals(-9, sum )
+
+    }
+
+    @ExperimentalStdlibApi
+    @Test
+    fun `Given input is '8 * 3 + 12 * (4 - 2)',When postfix & sum2 is invoked, calculate 48 `(){
+
+        val infix = "8 * 3 + 12 * (4 - 2)"
+        val postfix=sc.toPostfix(infix)
+        assertEquals("8 3 * 12 4 2 - * + ", postfix)
+
+        val sum = sc.sum2(postfix)
+
+        assertEquals(48, sum )
+
+    }
+
 }
